@@ -487,21 +487,22 @@ def _timeline_script(
             for entry in scene.entries:
                 element_id = json.dumps(f"{scene.scene_id}--{entry.target}")
                 if entry.motion == "ink-color-reveal" and entry.target == "visual":
-                    # 三段 GSAP 动画：实现默线显现→交叉过渡→彩色涌现
+                    # GSAP clip-path 纯净扫光：去除长时间透明度渐变，保证画出即清晰
                     at = entry.at
                     ink_id = json.dumps(f"{scene.scene_id}--visual--ink")
                     color_id = json.dumps(f"{scene.scene_id}--visual--color")
                     motions += (
-                        # 阶段 1：默线层显现（0.6s）
+                        # 阶段 1：默线层初始透明度直接为 1（靠 clipPath 隐藏），然后匀速横扫画出（2.0s）
                         f"tl.fromTo(document.getElementById({ink_id}),"
-                        f"{{opacity:0}},{{opacity:1,duration:0.600,ease:'power2.out'}},{at:.3f});"
-                        # 阶段 2a：默线层淡出（0.5s，与彩色层交叉）
-                        f"tl.to(document.getElementById({ink_id}),"
-                        f"{{opacity:0,duration:0.500,ease:'sine.in'}},{at + 0.600:.3f});"
-                        # 阶段 2b：彩色层渐入（灰度→彩色，0.9s）
+                        f"{{opacity:1,clipPath:'inset(0% 100% 0% 0%)'}},"
+                        f"{{opacity:1,clipPath:'inset(0% 0% 0% 0%)',duration:2.000,ease:'none'}},{at:.3f});"
+                        # 阶段 2：彩色层在默线画出 0.5s 后开始跟随，也是纯扫光无全局透明渐变（1.8s）
                         f"tl.fromTo(document.getElementById({color_id}),"
-                        f"{{opacity:0,filter:'grayscale(1)'}},"
-                        f"{{opacity:1,filter:'grayscale(0)',duration:0.900,ease:'sine.out'}},{at + 0.600:.3f});"
+                        f"{{opacity:1,clipPath:'inset(0% 100% 0% 0%)'}},"
+                        f"{{opacity:1,clipPath:'inset(0% 0% 0% 0%)',duration:1.800,ease:'none'}},{at + 0.500:.3f});"
+                        # 阶段 3：上色完成后，顶部的默线层缓慢淡出（0.8s）
+                        f"tl.to(document.getElementById({ink_id}),"
+                        f"{{opacity:0,duration:0.800,ease:'sine.in'}},{at + 2.800:.3f});"
                     )
                 else:
                     before, after, ease = effect_values[entry.motion]

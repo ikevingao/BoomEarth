@@ -895,7 +895,7 @@ def test_ink_color_reveal_scene_html_emits_dual_layer_stack() -> None:
     assert "scene-01-ink.png" in html_out
 
 
-def test_ink_color_reveal_timeline_script_emits_grayscale_and_fade() -> None:
+def test_ink_color_reveal_timeline_script_emits_clip_path_wipe() -> None:
     timeline = SimpleNamespace(
         scenes=(SimpleNamespace(id="scene-01", start=0.0, end=4.0),)
     )
@@ -920,9 +920,9 @@ def test_ink_color_reveal_timeline_script_emits_grayscale_and_fade() -> None:
 
     script = _timeline_script(timeline, (), motion)
 
-    assert "clipPath" not in script
-    assert "grayscale(1)" in script
-    assert "grayscale(0)" in script
+    assert "clipPath" in script
+    assert "inset(0% 100% 0% 0%)" in script
+    assert "grayscale" not in script
     assert 'scene-01--visual--ink' in script
     assert 'scene-01--visual--color' in script
 

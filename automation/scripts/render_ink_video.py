@@ -60,6 +60,16 @@ def render_ink_video(project_dir: Path) -> Path:
         gray_arr = np.dot(c_arr[..., :3], [0.2989, 0.5870, 0.1140])
         g_arr = np.stack([gray_arr] * 3, axis=-1)
 
+        # 自动检测实际墨线插画内容的真实 X 轴起始与结束坐标，消除走空白区域带来的延迟
+        non_white = np.any(i_arr < 240, axis=-1)
+        ink_cols = np.where(np.any(non_white, axis=0))[0]
+        if len(ink_cols) > 0:
+            c_start_x = max(0.0, float(ink_cols[0] - 8))
+            c_end_x = min(1920.0, float(ink_cols[-1] + 12))
+        else:
+            c_start_x = 0.0
+            c_end_x = 1920.0
+
         static_bytes = np.clip(c_arr, 0, 255).astype(np.uint8).tobytes()
 
         scene_canvases[sid] = {
@@ -67,6 +77,8 @@ def render_ink_video(project_dir: Path) -> Path:
             "g_arr": g_arr,
             "i_arr": i_arr,
             "static_bytes": static_bytes,
+            "c_start_x": c_start_x,
+            "c_end_x": c_end_x,
         }
 
     total_duration = 33.10
@@ -95,6 +107,81 @@ def render_ink_video(project_dir: Path) -> Path:
 
     pipe = subprocess.Popen(ffmpeg_cmd, stdin=subprocess.PIPE)
 
+    # Load subtitles & word-level timestamps
+    captions_file = media / "captions.json"
+    words_file = media / "captions_words.json"
+    captions = []
+    words = []
+    if captions_file.exists():
+        with open(captions_file, encoding="utf-8") as f:
+            captions = json.load(f)
+    if words_file.exists():
+        with open(words_file, encoding="utf-8") as f:
+            words = json.load(f)
+
+    font_path = "C:/Windows/Fonts/msyhbd.ttc"
+    if not Path(font_path).exists():
+        font_path = "C:/Windows/Fonts/msyh.ttc"
+    from PIL import ImageDraw, ImageFont
+    font = ImageFont.truetype(font_path, 44)
+
+    # Pre-calculate subtitle geometry and layout
+    prepared_captions = []
+    for cap in captions:
+        cap_text = cap["text"]
+        cap_words = [
+            w for w in words
+            if not w.get("isGap", False) and w["start"] >= cap["start"] - 0.05 and w["end"] <= cap["end"] + 0.05
+        ]
+        if not cap_words:
+            dur = cap["end"] - cap["start"]
+            c_count = len(cap_text)
+            c_dur = dur / max(1, c_count)
+            cap_words = [
+                {"text": char, "start": cap["start"] + i * c_dur, "end": cap["start"] + (i + 1) * c_dur}
+                for i, char in enumerate(cap_text)
+            ]
+
+        word_positions = []
+        curr_offset = 0.0
+        for w in cap_words:
+            w_text = w["text"]
+            w_w = font.getlength(w_text)
+            word_positions.append({
+                "text": w_text,
+                "start": w["start"],
+                "end": w["end"],
+                "rel_x": curr_offset,
+                "width": w_w,
+            })
+            curr_offset += w_w
+
+        total_w = curr_offset if curr_offset > 0 else font.getlength(cap_text)
+        start_x = (1920 - total_w) / 2
+        base_y = 1080 - 140
+        pad_x, pad_y = 28, 12
+        pill_box = (
+            int(start_x - pad_x),
+            int(base_y - pad_y),
+            int(start_x + total_w + pad_x),
+            int(base_y + 44 + pad_y),
+        )
+        bw = pill_box[2] - pill_box[0]
+        bh = pill_box[3] - pill_box[1]
+
+        prepared_captions.append({
+            "start": cap["start"],
+            "end": cap["end"],
+            "words": word_positions,
+            "pill_box": pill_box,
+            "bw": bw,
+            "bh": bh,
+            "pad_x": pad_x,
+            "pad_y": pad_y,
+        })
+
+    xs = np.arange(1920, dtype=np.float32)[None, :, None]
+
     t0 = time.time()
     for frame_idx in range(total_frames):
         t = frame_idx / float(fps)
@@ -109,31 +196,68 @@ def render_ink_video(project_dir: Path) -> Path:
         sc_data = scene_canvases[sid]
         s = t - cur_sc["start"]
 
-        if s < 0.6:
-            tau = s / 0.6
-            alpha_ink = 1.0 - (1.0 - tau) ** 2
-            frame = (1.0 - alpha_ink) * 255.0 + alpha_ink * sc_data["i_arr"]
-            raw_bytes = np.clip(frame, 0, 255).astype(np.uint8).tobytes()
-        elif s < 1.1:
-            tau_ink = (s - 0.6) / 0.5
-            alpha_ink = math.cos(tau_ink * math.pi / 2.0)
-            tau_col = (s - 0.6) / 0.9
-            alpha_col = math.sin(tau_col * math.pi / 2.0)
-            g = 1.0 - math.sin(tau_col * math.pi / 2.0)
-            col = g * sc_data["g_arr"] + (1.0 - g) * sc_data["c_arr"]
-            current_col = (1.0 - alpha_col) * 255.0 + alpha_col * col
-            ink_norm = sc_data["i_arr"] / 255.0
-            ink_factor = (1.0 - alpha_ink) * 1.0 + alpha_ink * ink_norm
-            frame = current_col * ink_factor
-            raw_bytes = np.clip(frame, 0, 255).astype(np.uint8).tobytes()
-        elif s < 1.5:
-            tau_col = (s - 0.6) / 0.9
-            g = 1.0 - math.sin(tau_col * math.pi / 2.0)
-            frame = g * sc_data["g_arr"] + (1.0 - g) * sc_data["c_arr"]
-            raw_bytes = np.clip(frame, 0, 255).astype(np.uint8).tobytes()
-        else:
-            raw_bytes = sc_data["static_bytes"]
+        scene_duration = cur_sc["end"] - cur_sc["start"]
+        # 预留结尾全彩定格时间（让画面与语音讲完同步定格），其余时间全部用于画面渐进展开
+        hold_time = min(0.6, scene_duration * 0.08)
+        active_time = max(1.0, scene_duration - hold_time)
+        t_ink = active_time * 0.65
+        t_col = active_time * 0.35
 
+        x_start = sc_data["c_start_x"]
+        x_end = sc_data["c_end_x"]
+        span = x_end - x_start
+
+        if s < t_ink:
+            # 阶段 1：左边绘制墨线，右边保持纯白空白。画笔直接从第一笔实际线条开始往右画，0 空白延迟
+            p = min(1.0, max(0.0, s / t_ink))
+            edge = x_start + p * span
+            feather = 20.0
+            mask = np.clip((edge - xs) / feather, 0.0, 1.0)
+            frame = mask * sc_data["i_arr"] + (1.0 - mask) * 255.0
+        elif s < active_time:
+            # 阶段 2：整幅墨线画全后，彩色从实际内容起点向终点逐级填色
+            p_col = min(1.0, max(0.0, (s - t_ink) / t_col))
+            edge_col = x_start + p_col * span
+            feather = 20.0
+            mask_col = np.clip((edge_col - xs) / feather, 0.0, 1.0)
+            frame = mask_col * sc_data["c_arr"] + (1.0 - mask_col) * sc_data["i_arr"]
+        else:
+            # 阶段 3：画面完全绘制与填色完成，呈现高清全彩图，对应台词与字幕正好收尾讲完
+            frame = sc_data["c_arr"].copy()
+
+        # 叠加动态逐字展开字幕（与配音和画面同步逐步展开显示）
+        for p_cap in prepared_captions:
+            if p_cap["start"] <= t <= p_cap["end"]:
+                has_spoken = any(t >= w["start"] for w in p_cap["words"])
+                if has_spoken:
+                    bw, bh = p_cap["bw"], p_cap["bh"]
+                    pill_img = Image.new("RGBA", (bw, bh), (0, 0, 0, 0))
+                    pdraw = ImageDraw.Draw(pill_img)
+                    pdraw.rounded_rectangle([0, 0, bw, bh], radius=16, fill=(30, 32, 35, 215))
+
+                    pad_x = p_cap["pad_x"]
+                    pad_y = p_cap["pad_y"]
+                    for w in p_cap["words"]:
+                        if t >= w["start"]:
+                            is_curr = w["start"] <= t <= w["end"]
+                            col = (255, 230, 0, 255) if is_curr else (255, 255, 255, 255)
+                            pdraw.text(
+                                (pad_x + w["rel_x"], pad_y - 2),
+                                w["text"],
+                                font=font,
+                                fill=col,
+                                stroke_width=2,
+                                stroke_fill=(20, 20, 20, 255),
+                            )
+
+                    pill_arr = np.array(pill_img, dtype=np.float32)
+                    alpha = pill_arr[..., 3:4] / 255.0
+                    box = p_cap["pill_box"]
+                    sub_f = frame[box[1]:box[3], box[0]:box[2]]
+                    frame[box[1]:box[3], box[0]:box[2]] = alpha * pill_arr[..., :3] + (1.0 - alpha) * sub_f
+                break
+
+        raw_bytes = np.clip(frame, 0, 255).astype(np.uint8).tobytes()
         pipe.stdin.write(raw_bytes)
 
     pipe.stdin.close()
