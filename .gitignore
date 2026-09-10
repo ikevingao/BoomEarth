@@ -43,3 +43,16 @@ node_modules/
 /01-内容生产/视频工作台/制作中/**/工程/media/narration.raw.wav
 /01-内容生产/视频工作台/制作中/**/工程/media/voice_manifest.json
 /01-内容生产/视频工作台/已制作/
+
+# Local only: Content generation, production assets & video components
+/01-内容生成/
+/01-内容生产/素材库/
+/01-内容生产/00-选题池/*
+!/01-内容生产/00-选题池/.gitkeep
+/01-内容生产/03-对标爆款库/*
+!/01-内容生产/03-对标爆款库/.gitkeep
+/01-内容生产/数据统计/*
+!/01-内容生产/数据统计/.gitkeep
+/05-视频组件/*
+!/05-视频组件/.gitkeep
+
