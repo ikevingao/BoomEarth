@@ -858,3 +858,71 @@ def test_xiaohuang_template_reuses_feathered_art_edges() -> None:
     assert ".xiaohuang-native-text .visual-frame img" in template
     assert "mask-image:" in template
     assert "filter: blur" not in template
+
+
+def test_ink_color_reveal_scene_html_emits_dual_layer_stack() -> None:
+    scene = SimpleNamespace(
+        id="scene-01",
+        layout_variant="standard",
+        title_lines=("Line 1",),
+        subtitle_lines=(),
+        notes=(),
+        chapter="01",
+        progress="1/1",
+        kicker="Kicker",
+        overlay_labels=(),
+        visual_asset="工程/assets/profiled-illustrations/sponge-host-handdrawn-v1/scene-01.png",
+        visual_mode="human-action",
+    )
+    plan = SimpleNamespace(
+        scenes=(scene,),
+        visual_system="profiled-illustration-v4",
+        visual_theme="sponge-host-handdrawn-v1",
+        visual_effect="ink-color-reveal",
+    )
+    timeline = SimpleNamespace(scenes=(SimpleNamespace(id="scene-01", start=0.0, end=4.0),))
+
+    html_out = _scene_html(
+        plan,
+        timeline,
+        {"scene-01": "scene-01.png"},
+    )
+
+    assert 'class="ink-color-stack"' in html_out
+    assert 'id="scene-01--visual--color"' in html_out
+    assert 'id="scene-01--visual--ink"' in html_out
+    assert 'style="opacity:0"' in html_out
+    assert "scene-01-ink.png" in html_out
+
+
+def test_ink_color_reveal_timeline_script_emits_grayscale_and_fade() -> None:
+    timeline = SimpleNamespace(
+        scenes=(SimpleNamespace(id="scene-01", start=0.0, end=4.0),)
+    )
+    motion = MotionPlan(
+        1,
+        "profiled-illustration-v4",
+        "a" * 64,
+        "b" * 64,
+        "c" * 64,
+        4.0,
+        (
+            SceneMotion(
+                "scene-01",
+                0.0,
+                4.0,
+                (MotionEntry("visual", 0.8, 1.5, "ink-color-reveal"),),
+                (),
+                None,
+            ),
+        ),
+    )
+
+    script = _timeline_script(timeline, (), motion)
+
+    assert "clipPath" not in script
+    assert "grayscale(1)" in script
+    assert "grayscale(0)" in script
+    assert 'scene-01--visual--ink' in script
+    assert 'scene-01--visual--color' in script
+

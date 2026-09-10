@@ -1,0 +1,20 @@
+{
+  "frame_count": 6,
+  "times_s": [
+    1.654,
+    8.271,
+    14.888,
+    18.196,
+    24.813,
+    31.43
+  ],
+  "layout": "3x2",
+  "coverage": [
+    "open",
+    "early",
+    "mid",
+    "transition",
+    "late",
+    "near-end"
+  ]
+}

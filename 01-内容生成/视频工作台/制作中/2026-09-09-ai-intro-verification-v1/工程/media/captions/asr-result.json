@@ -1,0 +1,744 @@
+{
+  "audio_info": {
+    "duration": 33083
+  },
+  "result": {
+    "additions": {
+      "duration": "33083"
+    },
+    "text": "很多人以为 AI 就是聊天机器人其实不是 AI 全称人工智能简单说就是让机器模仿人的感知 思考和学习能力 不管是图片识别语音翻译还是数据分析文案生成背后都属于 AI 技术 它不是拥有自我意识的生命只是靠海量数据训练出来的工具理性用好 AI 才是关键",
+    "utterances": [
+      {
+        "end_time": 4440,
+        "start_time": 200,
+        "text": "很多人以为 AI 就是聊天机器人其实不是",
+        "words": [
+          {
+            "confidence": 0,
+            "end_time": 400,
+            "start_time": 200,
+            "text": "很"
+          },
+          {
+            "confidence": 0,
+            "end_time": 520,
+            "start_time": 400,
+            "text": "多"
+          },
+          {
+            "confidence": 0,
+            "end_time": 760,
+            "start_time": 520,
+            "text": "人"
+          },
+          {
+            "confidence": 0,
+            "end_time": 960,
+            "start_time": 760,
+            "text": "以"
+          },
+          {
+            "confidence": 0,
+            "end_time": 1120,
+            "start_time": 960,
+            "text": "为"
+          },
+          {
+            "confidence": 0,
+            "end_time": -1,
+            "start_time": -1,
+            "text": " "
+          },
+          {
+            "confidence": 0,
+            "end_time": 1440,
+            "start_time": 1240,
+            "text": "AI"
+          },
+          {
+            "confidence": 0,
+            "end_time": -1,
+            "start_time": -1,
+            "text": " "
+          },
+          {
+            "confidence": 0,
+            "end_time": 1760,
+            "start_time": 1560,
+            "text": "就"
+          },
+          {
+            "confidence": 0,
+            "end_time": 1960,
+            "start_time": 1760,
+            "text": "是"
+          },
+          {
+            "confidence": 0,
+            "end_time": 2240,
+            "start_time": 1960,
+            "text": "聊"
+          },
+          {
+            "confidence": 0,
+            "end_time": 2440,
+            "start_time": 2240,
+            "text": "天"
+          },
+          {
+            "confidence": 0,
+            "end_time": 2640,
+            "start_time": 2440,
+            "text": "机"
+          },
+          {
+            "confidence": 0,
+            "end_time": 2800,
+            "start_time": 2640,
+            "text": "器"
+          },
+          {
+            "confidence": 0,
+            "end_time": 3080,
+            "start_time": 2800,
+            "text": "人"
+          },
+          {
+            "confidence": 0,
+            "end_time": 3760,
+            "start_time": 3520,
+            "text": "其"
+          },
+          {
+            "confidence": 0,
+            "end_time": 3920,
+            "start_time": 3760,
+            "text": "实"
+          },
+          {
+            "confidence": 0,
+            "end_time": 4160,
+            "start_time": 3920,
+            "text": "不"
+          },
+          {
+            "confidence": 0,
+            "end_time": 4440,
+            "start_time": 4160,
+            "text": "是"
+          }
+        ]
+      },
+      {
+        "end_time": 10840,
+        "start_time": 4440,
+        "text": "AI 全称人工智能简单说就是让机器模仿人的感知",
+        "words": [
+          {
+            "confidence": 0,
+            "end_time": 5520,
+            "start_time": 4440,
+            "text": "AI"
+          },
+          {
+            "confidence": 0,
+            "end_time": -1,
+            "start_time": -1,
+            "text": " "
+          },
+          {
+            "confidence": 0,
+            "end_time": 5880,
+            "start_time": 5680,
+            "text": "全"
+          },
+          {
+            "confidence": 0,
+            "end_time": 6120,
+            "start_time": 5880,
+            "text": "称"
+          },
+          {
+            "confidence": 0,
+            "end_time": 6400,
+            "start_time": 6120,
+            "text": "人"
+          },
+          {
+            "confidence": 0,
+            "end_time": 6560,
+            "start_time": 6400,
+            "text": "工"
+          },
+          {
+            "confidence": 0,
+            "end_time": 6800,
+            "start_time": 6560,
+            "text": "智"
+          },
+          {
+            "confidence": 0,
+            "end_time": 7040,
+            "start_time": 6800,
+            "text": "能"
+          },
+          {
+            "confidence": 0,
+            "end_time": 7680,
+            "start_time": 7440,
+            "text": "简"
+          },
+          {
+            "confidence": 0,
+            "end_time": 7880,
+            "start_time": 7680,
+            "text": "单"
+          },
+          {
+            "confidence": 0,
+            "end_time": 8240,
+            "start_time": 7880,
+            "text": "说"
+          },
+          {
+            "confidence": 0,
+            "end_time": 8800,
+            "start_time": 8520,
+            "text": "就"
+          },
+          {
+            "confidence": 0,
+            "end_time": 8960,
+            "start_time": 8800,
+            "text": "是"
+          },
+          {
+            "confidence": 0,
+            "end_time": 9240,
+            "start_time": 8960,
+            "text": "让"
+          },
+          {
+            "confidence": 0,
+            "end_time": 9480,
+            "start_time": 9240,
+            "text": "机"
+          },
+          {
+            "confidence": 0,
+            "end_time": 9640,
+            "start_time": 9480,
+            "text": "器"
+          },
+          {
+            "confidence": 0,
+            "end_time": 9920,
+            "start_time": 9720,
+            "text": "模"
+          },
+          {
+            "confidence": 0,
+            "end_time": 10080,
+            "start_time": 9920,
+            "text": "仿"
+          },
+          {
+            "confidence": 0,
+            "end_time": 10280,
+            "start_time": 10080,
+            "text": "人"
+          },
+          {
+            "confidence": 0,
+            "end_time": 10440,
+            "start_time": 10280,
+            "text": "的"
+          },
+          {
+            "confidence": 0,
+            "end_time": 10680,
+            "start_time": 10440,
+            "text": "感"
+          },
+          {
+            "confidence": 0,
+            "end_time": 10840,
+            "start_time": 10680,
+            "text": "知"
+          }
+        ]
+      },
+      {
+        "end_time": 13020,
+        "start_time": 11420,
+        "text": "思考和学习能力",
+        "words": [
+          {
+            "confidence": 0,
+            "end_time": 11620,
+            "start_time": 11420,
+            "text": "思"
+          },
+          {
+            "confidence": 0,
+            "end_time": 11820,
+            "start_time": 11620,
+            "text": "考"
+          },
+          {
+            "confidence": 0,
+            "end_time": 12180,
+            "start_time": 11900,
+            "text": "和"
+          },
+          {
+            "confidence": 0,
+            "end_time": 12420,
+            "start_time": 12180,
+            "text": "学"
+          },
+          {
+            "confidence": 0,
+            "end_time": 12580,
+            "start_time": 12420,
+            "text": "习"
+          },
+          {
+            "confidence": 0,
+            "end_time": 12820,
+            "start_time": 12580,
+            "text": "能"
+          },
+          {
+            "confidence": 0,
+            "end_time": 13020,
+            "start_time": 12820,
+            "text": "力"
+          }
+        ]
+      },
+      {
+        "end_time": 22220,
+        "start_time": 13860,
+        "text": "不管是图片识别语音翻译还是数据分析文案生成背后都属于 AI 技术",
+        "words": [
+          {
+            "confidence": 0,
+            "end_time": 14100,
+            "start_time": 13860,
+            "text": "不"
+          },
+          {
+            "confidence": 0,
+            "end_time": 14300,
+            "start_time": 14100,
+            "text": "管"
+          },
+          {
+            "confidence": 0,
+            "end_time": 14580,
+            "start_time": 14300,
+            "text": "是"
+          },
+          {
+            "confidence": 0,
+            "end_time": 14780,
+            "start_time": 14580,
+            "text": "图"
+          },
+          {
+            "confidence": 0,
+            "end_time": 14980,
+            "start_time": 14780,
+            "text": "片"
+          },
+          {
+            "confidence": 0,
+            "end_time": 15260,
+            "start_time": 15020,
+            "text": "识"
+          },
+          {
+            "confidence": 0,
+            "end_time": 15460,
+            "start_time": 15260,
+            "text": "别"
+          },
+          {
+            "confidence": 0,
+            "end_time": 16100,
+            "start_time": 15860,
+            "text": "语"
+          },
+          {
+            "confidence": 0,
+            "end_time": 16300,
+            "start_time": 16100,
+            "text": "音"
+          },
+          {
+            "confidence": 0,
+            "end_time": 16540,
+            "start_time": 16300,
+            "text": "翻"
+          },
+          {
+            "confidence": 0,
+            "end_time": 16700,
+            "start_time": 16540,
+            "text": "译"
+          },
+          {
+            "confidence": 0,
+            "end_time": 17380,
+            "start_time": 17140,
+            "text": "还"
+          },
+          {
+            "confidence": 0,
+            "end_time": 17620,
+            "start_time": 17380,
+            "text": "是"
+          },
+          {
+            "confidence": 0,
+            "end_time": 17860,
+            "start_time": 17620,
+            "text": "数"
+          },
+          {
+            "confidence": 0,
+            "end_time": 18060,
+            "start_time": 17860,
+            "text": "据"
+          },
+          {
+            "confidence": 0,
+            "end_time": 18300,
+            "start_time": 18100,
+            "text": "分"
+          },
+          {
+            "confidence": 0,
+            "end_time": 18540,
+            "start_time": 18300,
+            "text": "析"
+          },
+          {
+            "confidence": 0,
+            "end_time": 19220,
+            "start_time": 18940,
+            "text": "文"
+          },
+          {
+            "confidence": 0,
+            "end_time": 19420,
+            "start_time": 19220,
+            "text": "案"
+          },
+          {
+            "confidence": 0,
+            "end_time": 19660,
+            "start_time": 19460,
+            "text": "生"
+          },
+          {
+            "confidence": 0,
+            "end_time": 19940,
+            "start_time": 19660,
+            "text": "成"
+          },
+          {
+            "confidence": 0,
+            "end_time": 20580,
+            "start_time": 20340,
+            "text": "背"
+          },
+          {
+            "confidence": 0,
+            "end_time": 20820,
+            "start_time": 20580,
+            "text": "后"
+          },
+          {
+            "confidence": 0,
+            "end_time": 21060,
+            "start_time": 20820,
+            "text": "都"
+          },
+          {
+            "confidence": 0,
+            "end_time": 21220,
+            "start_time": 21060,
+            "text": "属"
+          },
+          {
+            "confidence": 0,
+            "end_time": 21380,
+            "start_time": 21220,
+            "text": "于"
+          },
+          {
+            "confidence": 0,
+            "end_time": -1,
+            "start_time": -1,
+            "text": " "
+          },
+          {
+            "confidence": 0,
+            "end_time": 21780,
+            "start_time": 21540,
+            "text": "AI"
+          },
+          {
+            "confidence": 0,
+            "end_time": -1,
+            "start_time": -1,
+            "text": " "
+          },
+          {
+            "confidence": 0,
+            "end_time": 22060,
+            "start_time": 21900,
+            "text": "技"
+          },
+          {
+            "confidence": 0,
+            "end_time": 22220,
+            "start_time": 22060,
+            "text": "术"
+          }
+        ]
+      },
+      {
+        "end_time": 32280,
+        "start_time": 23240,
+        "text": "它不是拥有自我意识的生命只是靠海量数据训练出来的工具理性用好 AI 才是关键",
+        "words": [
+          {
+            "confidence": 0,
+            "end_time": 23280,
+            "start_time": 23240,
+            "text": "它"
+          },
+          {
+            "confidence": 0,
+            "end_time": 23520,
+            "start_time": 23360,
+            "text": "不"
+          },
+          {
+            "confidence": 0,
+            "end_time": 23720,
+            "start_time": 23520,
+            "text": "是"
+          },
+          {
+            "confidence": 0,
+            "end_time": 23920,
+            "start_time": 23720,
+            "text": "拥"
+          },
+          {
+            "confidence": 0,
+            "end_time": 24120,
+            "start_time": 23920,
+            "text": "有"
+          },
+          {
+            "confidence": 0,
+            "end_time": 24360,
+            "start_time": 24120,
+            "text": "自"
+          },
+          {
+            "confidence": 0,
+            "end_time": 24480,
+            "start_time": 24360,
+            "text": "我"
+          },
+          {
+            "confidence": 0,
+            "end_time": 24680,
+            "start_time": 24480,
+            "text": "意"
+          },
+          {
+            "confidence": 0,
+            "end_time": 24800,
+            "start_time": 24680,
+            "text": "识"
+          },
+          {
+            "confidence": 0,
+            "end_time": 25040,
+            "start_time": 24800,
+            "text": "的"
+          },
+          {
+            "confidence": 0,
+            "end_time": 25240,
+            "start_time": 25040,
+            "text": "生"
+          },
+          {
+            "confidence": 0,
+            "end_time": 25400,
+            "start_time": 25240,
+            "text": "命"
+          },
+          {
+            "confidence": 0,
+            "end_time": 26040,
+            "start_time": 25840,
+            "text": "只"
+          },
+          {
+            "confidence": 0,
+            "end_time": 26240,
+            "start_time": 26040,
+            "text": "是"
+          },
+          {
+            "confidence": 0,
+            "end_time": 26480,
+            "start_time": 26240,
+            "text": "靠"
+          },
+          {
+            "confidence": 0,
+            "end_time": 26760,
+            "start_time": 26480,
+            "text": "海"
+          },
+          {
+            "confidence": 0,
+            "end_time": 26960,
+            "start_time": 26760,
+            "text": "量"
+          },
+          {
+            "confidence": 0,
+            "end_time": 27200,
+            "start_time": 26960,
+            "text": "数"
+          },
+          {
+            "confidence": 0,
+            "end_time": 27360,
+            "start_time": 27200,
+            "text": "据"
+          },
+          {
+            "confidence": 0,
+            "end_time": 27680,
+            "start_time": 27440,
+            "text": "训"
+          },
+          {
+            "confidence": 0,
+            "end_time": 27840,
+            "start_time": 27680,
+            "text": "练"
+          },
+          {
+            "confidence": 0,
+            "end_time": 28080,
+            "start_time": 27840,
+            "text": "出"
+          },
+          {
+            "confidence": 0,
+            "end_time": 28200,
+            "start_time": 28080,
+            "text": "来"
+          },
+          {
+            "confidence": 0,
+            "end_time": 28400,
+            "start_time": 28200,
+            "text": "的"
+          },
+          {
+            "confidence": 0,
+            "end_time": 28600,
+            "start_time": 28400,
+            "text": "工"
+          },
+          {
+            "confidence": 0,
+            "end_time": 28800,
+            "start_time": 28600,
+            "text": "具"
+          },
+          {
+            "confidence": 0,
+            "end_time": 29880,
+            "start_time": 29640,
+            "text": "理"
+          },
+          {
+            "confidence": 0,
+            "end_time": 30080,
+            "start_time": 29880,
+            "text": "性"
+          },
+          {
+            "confidence": 0,
+            "end_time": 30360,
+            "start_time": 30160,
+            "text": "用"
+          },
+          {
+            "confidence": 0,
+            "end_time": 30600,
+            "start_time": 30360,
+            "text": "好"
+          },
+          {
+            "confidence": 0,
+            "end_time": -1,
+            "start_time": -1,
+            "text": " "
+          },
+          {
+            "confidence": 0,
+            "end_time": 31200,
+            "start_time": 30800,
+            "text": "AI"
+          },
+          {
+            "confidence": 0,
+            "end_time": -1,
+            "start_time": -1,
+            "text": " "
+          },
+          {
+            "confidence": 0,
+            "end_time": 31600,
+            "start_time": 31360,
+            "text": "才"
+          },
+          {
+            "confidence": 0,
+            "end_time": 31840,
+            "start_time": 31600,
+            "text": "是"
+          },
+          {
+            "confidence": 0,
+            "end_time": 32080,
+            "start_time": 31840,
+            "text": "关"
+          },
+          {
+            "confidence": 0,
+            "end_time": 32280,
+            "start_time": 32080,
+            "text": "键"
+          }
+        ]
+      }
+    ]
+  }
+}

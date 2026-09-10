@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "provider": "edge-tts",
+  "model": "azure-neural",
+  "voice_id": "zh-CN-YunxiNeural",
+  "playback_speed": 1.12,
+  "used_fallback": false
+}

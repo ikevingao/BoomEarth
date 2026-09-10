@@ -50,3 +50,10 @@ CC BY-NC components are **not cleared for commercial redistribution**. This is a
   are not claimed as KaterJ originals.
 - No vendor license file, notice or upstream content may be removed merely because an
   old Skill name is now a compatibility bridge.
+
+## Algorithm and external reference provenance
+
+- `src/boomearth/video/ink_variant.py`:
+  算法思路参考开源项目 `cs-board` (ChenShuo2004/cs-board, MIT 协议) 的自适应白板手绘渲染三阶段思路（阈值提墨线、逐笔显现与聚色扫掠）。
+  BoomEarth Phase 1 为纯 PIL 独立实现的墨线稿确定性派生算法与 GSAP 双层叠加动画，无上游代码复制；保留 MIT 致谢与思路引用说明。
+

@@ -108,6 +108,10 @@ class Settings:
     indextts2_reference_audio: Path
     yt_dlp_path: Path
     voice_playback_speed: float
+    tts_provider: str = "indextts2-local"
+    tts_voice: str = "zh-CN-YunxiNeural"
+    imagegen_provider: str = "dashscope"
+    imagegen_model: str = "wanx2.1-t2i-turbo"
 
     ENV_NAMES: ClassVar[tuple[str, ...]] = ENV_VARIABLES
     CREDENTIAL_NAMES: ClassVar[tuple[str, ...]] = CREDENTIAL_VARIABLES
@@ -126,6 +130,12 @@ class Settings:
         except (InvalidSettingError, ValueError):
             raise InvalidSettingError("VOICE_PLAYBACK_SPEED") from None
 
+        raw_env = dotenv_values(Path(root) / ".env") if (Path(root) / ".env").is_file() else {}
+        tts_provider = (os.environ.get("TTS_PROVIDER") or raw_env.get("TTS_PROVIDER") or "indextts2-local").strip()
+        tts_voice = (os.environ.get("TTS_VOICE") or raw_env.get("TTS_VOICE") or "zh-CN-YunxiNeural").strip()
+        imagegen_provider = (os.environ.get("IMAGEGEN_PROVIDER") or raw_env.get("IMAGEGEN_PROVIDER") or "dashscope").strip()
+        imagegen_model = (os.environ.get("IMAGEGEN_MODEL") or raw_env.get("IMAGEGEN_MODEL") or "wanx2.1-t2i-turbo").strip()
+
         return cls(
             tikhub_api_key=_required_value(values, "TIKHUB_API_KEY"),
             dashscope_api_key=_required_value(values, "DASHSCOPE_API_KEY"),
@@ -140,6 +150,10 @@ class Settings:
             ),
             yt_dlp_path=Path(_required_value(values, "YT_DLP_PATH")),
             voice_playback_speed=playback_speed,
+            tts_provider=tts_provider,
+            tts_voice=tts_voice,
+            imagegen_provider=imagegen_provider,
+            imagegen_model=imagegen_model,
         )
 
     def redacted_status(self) -> dict[str, str]:

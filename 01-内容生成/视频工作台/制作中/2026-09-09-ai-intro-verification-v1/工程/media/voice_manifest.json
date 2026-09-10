@@ -1,0 +1,16 @@
+{
+  "provider": "indextts2-local",
+  "voice_id": "user-indextts2-black-gold-v3",
+  "model": "IndexTTS2",
+  "reference_audio_path": "C:\\BoomEarthLocal\\voice\\reference.wav",
+  "reference_audio_sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "output_path": "D:\\06workspace\\01_MediaMak\\BoomEarth\\01-内容生成\\视频工作台\\制作中\\2026-09-09-ai-intro-verification-v1\\工程\\media\\narration.wav",
+  "output_sha256": "db01b614c23e993409106b71e1603faffe74c7bbec4af1b038cfde991dee7186",
+  "segment_contract_path": "D:\\06workspace\\01_MediaMak\\BoomEarth\\01-内容生成\\视频工作台\\制作中\\2026-09-09-ai-intro-verification-v1\\工程\\segment_contract.json",
+  "segment_contract_sha256": "9a6c2d143cd3882649cb009cf345e93513aa53dcce037b7ca8c033fd9899041e",
+  "segment_count": 1,
+  "playback_speed": 1.12,
+  "pronunciation_contract_path": "D:\\06workspace\\01_MediaMak\\BoomEarth\\automation\\config\\pronunciation-lexicon.json",
+  "pronunciation_contract_sha256": "9dd0e790bc7e0711e08b2cacbeb1568d5be9d29b625fcc6c7a9e02e134cbaf79",
+  "used_fallback": false
+}

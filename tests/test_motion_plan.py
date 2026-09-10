@@ -316,3 +316,35 @@ def test_profiled_motion_uses_theme_effect_and_reveals_all_eight_labels(
     assert {
         entry.target for entry in scene.entries if entry.target.startswith("overlay-label-")
     } == {f"overlay-label-{index}" for index in range(1, 9)}
+
+
+def test_motion_plan_compiles_ink_color_reveal_with_nominal_duration(tmp_path: Path) -> None:
+    _write_inputs(tmp_path)
+    timeline_path = tmp_path / "工程" / "scene-timeline.json"
+    timeline = json.loads(timeline_path.read_text(encoding="utf-8"))
+    timeline["duration_seconds"] = 6.0
+    timeline["scenes"][0]["end"] = 6.0
+    timeline_path.write_text(
+        json.dumps(timeline, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        + "\n",
+        encoding="utf-8",
+    )
+
+    content_path = tmp_path / "工程" / "content-plan.json"
+    content = json.loads(content_path.read_text(encoding="utf-8"))
+    content["schema_version"] = 5
+    content["visual_system"] = "profiled-illustration-v4"
+    content["visual_theme"] = "sponge-host-handdrawn-v1"
+    content["visual_effect"] = "ink-color-reveal"
+    content_path.write_text(
+        json.dumps(content, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        + "\n",
+        encoding="utf-8",
+    )
+
+    scene = compile_motion_plan(project_root=tmp_path).plan.scenes[0]
+    visual = next(entry for entry in scene.entries if entry.target == "visual")
+    assert visual.motion == "ink-color-reveal"
+    assert visual.duration == 1.5
+
+

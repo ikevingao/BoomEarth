@@ -1,0 +1,216 @@
+[
+  {
+    "id": "sponge-host-handdrawn-v1",
+    "name": "方块海绵插画",
+    "img_url": "docs/assets/sponge/2026-09/character-approved.png",
+    "features": "粗黑线白底、方块海绵角色、语义动作、原生手写标签、清爽留白",
+    "recommended": "BoomEarth 默认设定、AI 教程、产品讲解、知识解说",
+    "local_file": "sponge-host.png",
+    "invocation": "这条视频使用方块海绵插画风格。",
+    "prompt_style": "white-hand-drawn-sponge-host-with-native-chinese-labels",
+    "required_qc": [
+      "sponge_identity_consistent",
+      "character_performs_action",
+      "native_labels_correct",
+      "white_canvas",
+      "not_system_label_overlay"
+    ]
+  },
+  {
+    "id": "minimal-whiteboard",
+    "name": "极简粗线简笔白板风",
+    "img_url": "https://raw.githubusercontent.com/ChenShuo2004/cs-board/main/web/public/styles/minimal-whiteboard.webp",
+    "features": "粗黑线、少量配色、清爽留白",
+    "recommended": "知识讲解、个人表达、复盘总结",
+    "local_file": "minimal-whiteboard.webp",
+    "invocation": "这条视频使用极简粗线简笔白板风，以粗黑线、少量配色和清爽留白进行图解。",
+    "prompt_style": "minimalist-thick-line-whiteboard-sketch-with-clean-accents",
+    "required_qc": [
+      "thick_black_lines",
+      "clean_white_canvas",
+      "minimal_color_accents",
+      "concept_clear",
+      "not_decorative_cartoon"
+    ]
+  },
+  {
+    "id": "business-doodle",
+    "name": "极简商务涂鸦风",
+    "img_url": "https://raw.githubusercontent.com/ChenShuo2004/cs-board/main/web/public/styles/business-doodle.webp",
+    "features": "几何图表、蓝绿配色、专业克制",
+    "recommended": "产品介绍、商业分析、项目汇报",
+    "local_file": "business-doodle.webp",
+    "invocation": "这条视频使用极简商务涂鸦风，用几何图表与蓝绿配色做专业克制的视觉呈现。",
+    "prompt_style": "business-doodle-infographic-with-blue-green-geometry",
+    "required_qc": [
+      "geometric_charts",
+      "blue_green_palette",
+      "professional_restraint",
+      "structure_clear",
+      "not_cluttered"
+    ]
+  },
+  {
+    "id": "warm-pencil",
+    "name": "暖米黄素描白板风",
+    "img_url": "https://raw.githubusercontent.com/ChenShuo2004/cs-board/main/web/public/styles/warm-pencil.webp",
+    "features": "铅笔排线、纸张质感、温暖细腻",
+    "recommended": "人物故事、个人成长、品牌叙事",
+    "local_file": "warm-pencil.webp",
+    "invocation": "这条视频使用暖米黄素描白板风，通过铅笔排线与米黄纸张质感呈现温暖细腻的图景。",
+    "prompt_style": "warm-pencil-sketch-on-textured-paper",
+    "required_qc": [
+      "pencil_hatching",
+      "paper_texture",
+      "warm_tone",
+      "delicate_expression",
+      "not_flat_vector"
+    ]
+  },
+  {
+    "id": "guofeng-flat",
+    "name": "粗线扁平国风卡通",
+    "img_url": "https://raw.githubusercontent.com/ChenShuo2004/cs-board/main/web/public/styles/guofeng-flat.webp",
+    "features": "朱红玉绿、国风纹样、生动平涂",
+    "recommended": "传统文化、国风品牌、中文创意",
+    "local_file": "guofeng-flat.webp",
+    "invocation": "这条视频使用粗线扁平国风卡通风格，融合朱红玉绿、国风纹样与生动平涂。",
+    "prompt_style": "traditional-chinese-guofeng-flat-illustration-with-vermilion-and-jade",
+    "required_qc": [
+      "guofeng_palette",
+      "traditional_motifs",
+      "flat_linework",
+      "cultural_relevance",
+      "not_western_cartoon"
+    ]
+  },
+  {
+    "id": "viral-pop",
+    "name": "爆款高热吸睛风",
+    "img_url": "https://raw.githubusercontent.com/ChenShuo2004/cs-board/main/web/public/styles/viral-pop.webp",
+    "features": "高饱和、强对比、夸张动势",
+    "recommended": "短视频开场、强观点、热点表达",
+    "local_file": "viral-pop.webp",
+    "invocation": "这条视频使用爆款高热吸睛风，以高饱和、强对比与夸张动势抓住眼球。",
+    "prompt_style": "viral-pop-high-contrast-dynamic-poster-style",
+    "required_qc": [
+      "high_saturation",
+      "strong_contrast",
+      "exaggerated_motion",
+      "hook_impact",
+      "not_dull"
+    ]
+  },
+  {
+    "id": "black-gold-tech",
+    "name": "黑金科技发布会风",
+    "img_url": "https://raw.githubusercontent.com/ChenShuo2004/cs-board/main/web/public/styles/black-gold-tech.webp",
+    "features": "黑金光效、科技舞台、高级权威",
+    "recommended": "AI、科技产品、发布会",
+    "local_file": "black-gold-tech.webp",
+    "invocation": "这条视频使用黑金科技发布会风，以黑金光效、科技舞台与高级权威感展示内容。",
+    "prompt_style": "premium-black-gold-lighting-keynote-stage-visual",
+    "required_qc": [
+      "black_gold_lighting",
+      "tech_stage_ambiance",
+      "authoritative_composition",
+      "lighting_not_muddy"
+    ]
+  },
+  {
+    "id": "healing-journal",
+    "name": "清新治愈手账风",
+    "img_url": "https://raw.githubusercontent.com/ChenShuo2004/cs-board/main/web/public/styles/healing-journal.webp",
+    "features": "柔和水彩、低饱和配色、生活手账感",
+    "recommended": "情感、生活方式、自我成长",
+    "local_file": "healing-journal.webp",
+    "invocation": "这条视频使用清新治愈手账风，用柔和水彩、低饱和配色与生活手账感传递温度。",
+    "prompt_style": "healing-journal-watercolor-with-soft-muted-tones",
+    "required_qc": [
+      "soft_watercolor",
+      "low_saturation",
+      "journal_aesthetic",
+      "gentle_composition"
+    ]
+  },
+  {
+    "id": "retro-collage",
+    "name": "复古报纸拼贴风",
+    "img_url": "https://raw.githubusercontent.com/ChenShuo2004/cs-board/main/web/public/styles/retro-collage.webp",
+    "features": "撕纸拼贴、半色调、编辑杂志感",
+    "recommended": "深度观点、文化内容、案例复盘",
+    "local_file": "retro-collage.webp",
+    "invocation": "这条视频使用复古报纸拼贴风，通过撕纸拼贴、半色调与编辑杂志感做深度呈现。",
+    "prompt_style": "retro-newspaper-halftone-magazine-paper-collage",
+    "required_qc": [
+      "torn_paper_collage",
+      "halftone_texture",
+      "editorial_layout",
+      "vintage_depth"
+    ]
+  },
+  {
+    "id": "paper-metaphor",
+    "name": "纸感隐喻拼贴风",
+    "img_url": "https://raw.githubusercontent.com/ChenShuo2004/cs-board/main/web/public/styles/paper-metaphor.png",
+    "features": "手工剪纸、观点隐喻、高级克制",
+    "recommended": "价值观、关系、流程、复杂观点",
+    "local_file": "paper-metaphor.png",
+    "invocation": "这条视频使用纸感隐喻拼贴风，用手工剪纸与观点隐喻呈现高级克制的视觉。",
+    "prompt_style": "paper-craft-cutout-metaphor-with-restrained-composition",
+    "required_qc": [
+      "paper_cutout_layers",
+      "conceptual_metaphor",
+      "elegant_restraint",
+      "clear_symbolism"
+    ]
+  },
+  {
+    "id": "oil-visual",
+    "name": "漫画墨线解释风",
+    "img_url": "https://raw.githubusercontent.com/ChenShuo2004/cs-board/main/web/public/styles/oil-visual.png",
+    "features": "漫画墨线、半调网点、概念机制",
+    "recommended": "原理讲解、机制拆解、商业洞察",
+    "local_file": "oil-visual.png",
+    "invocation": "这条视频使用漫画墨线解释风，以漫画墨线、半调网点和概念机制清晰拆解原理。",
+    "prompt_style": "comic-ink-linework-with-halftone-dots-mechanic-explainer",
+    "required_qc": [
+      "ink_linework",
+      "halftone_dots",
+      "mechanism_explained",
+      "dynamic_comic_composition"
+    ]
+  },
+  {
+    "id": "clay-3d",
+    "name": "3D黏土趣味风",
+    "img_url": "https://raw.githubusercontent.com/ChenShuo2004/cs-board/main/web/public/styles/clay-3d.webp",
+    "features": "黏土材质、玩具比例、温暖可爱",
+    "recommended": "亲子教育、轻量品牌、趣味科普",
+    "local_file": "clay-3d.webp",
+    "invocation": "这条视频使用3D黏土趣味风，以黏土材质、玩具比例和温暖可爱的质感呈现。",
+    "prompt_style": "clay-3d-stop-motion-toy-proportions-warm-lighting",
+    "required_qc": [
+      "clay_texture",
+      "playful_proportions",
+      "warm_lighting",
+      "charming_characters"
+    ]
+  },
+  {
+    "id": "cyber-neon",
+    "name": "赛博霓虹漫画风",
+    "img_url": "https://raw.githubusercontent.com/ChenShuo2004/cs-board/main/web/public/styles/cyber-neon.webp",
+    "features": "霓虹青紫、漫画速度线、未来感",
+    "recommended": "AI 趋势、数码科技、年轻化观点",
+    "local_file": "cyber-neon.webp",
+    "invocation": "这条视频使用赛博霓虹漫画风，以霓虹青紫、漫画速度线和未来感突出科技张力。",
+    "prompt_style": "cyberpunk-neon-cyan-purple-speedlines-future-comic",
+    "required_qc": [
+      "neon_cyan_purple",
+      "comic_speedlines",
+      "futuristic_vibe",
+      "high_energy"
+    ]
+  }
+]

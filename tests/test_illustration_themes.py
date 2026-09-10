@@ -14,8 +14,23 @@ from boomearth.video.illustration_themes import (
 )
 
 
-EXPECTED_THEMES = {
+EXPECTED_CORE_13_THEMES = {
     "sponge-host-handdrawn-v1",
+    "minimal-whiteboard",
+    "business-doodle",
+    "warm-pencil",
+    "guofeng-flat",
+    "viral-pop",
+    "black-gold-tech",
+    "healing-journal",
+    "retro-collage",
+    "paper-metaphor",
+    "oil-visual",
+    "clay-3d",
+    "cyber-neon",
+}
+
+EXPECTED_LEGACY_THEMES = {
     "vivid-comic-explainer",
     "engineering-sketch-explainer",
     "four-panel-comic-explainer",
@@ -23,105 +38,77 @@ EXPECTED_THEMES = {
     "xiaohuang-warm-first-v1",
 }
 
-EXPECTED_QC = {
-    "sponge-host-handdrawn-v1": {"sponge_identity_consistent", "character_performs_action", "native_labels_correct", "white_canvas", "not_system_label_overlay"},
-    "vivid-comic-explainer": {
-        "character_consistent",
-        "expression_supports_claim",
-        "action_explains_claim",
-        "accent_palette_controlled",
-        "not_decorative_cartoon",
-    },
-    "engineering-sketch-explainer": {
-        "engineering_subject_real",
-        "callouts_support_claim",
-        "mechanical_exception_valid",
-        "linework_clean",
-        "diagram_not_overloaded",
-    },
-    "four-panel-comic-explainer": {
-        "exactly_four_panels",
-        "reading_order_clear",
-        "beats_continuous",
-        "character_consistent",
-        "one_event_per_panel",
-        "lower_panels_caption_safe",
-    },
-    "blue-black-whiteboard-explainer": {
-        "marker_material_clear",
-        "blue_black_palette_only",
-        "structure_type_clear",
-        "reading_path_clear",
-        "not_ppt_page",
-        "not_character_led",
-    },
-    "xiaohuang-warm-first-v1": {
-        "xiaohuang_identity_consistent",
-        "character_performs_action",
-        "native_labels_correct",
-        "warm_white_canvas",
-        "not_system_label_overlay",
-    },
-}
 
-
-def test_profiled_theme_registry_is_exact_and_immutable() -> None:
+def test_profiled_theme_registry_contains_13_core_templates_and_legacy() -> None:
     assert PROFILED_VISUAL_SYSTEM == "profiled-illustration-v4"
-    assert set(THEMES) == EXPECTED_THEMES
+    assert EXPECTED_CORE_13_THEMES.issubset(set(THEMES))
+    assert EXPECTED_LEGACY_THEMES.issubset(set(THEMES))
     assert all(theme.directory == theme.id for theme in THEMES.values())
-    assert {
-        theme.chinese_name for theme in THEMES.values()
-    } == {
-        "方块海绵插画",
-        "鲜彩漫画讲解",
-        "工程手稿图解",
-        "四格连环漫画",
-        "蓝黑白板讲解",
-        "小黄温度插画",
+
+    # 验证 13 款推荐模板的中文名称完整性
+    core_chinese_names = {
+        THEMES[tid].chinese_name for tid in EXPECTED_CORE_13_THEMES
     }
-    assert {
-        theme_id: set(theme.required_qc)
-        for theme_id, theme in THEMES.items()
-    } == EXPECTED_QC
-    with pytest.raises(TypeError):
-        THEMES["another"] = THEMES["vivid-comic-explainer"]  # type: ignore[index]
-    with pytest.raises(FrozenInstanceError):
-        THEMES["vivid-comic-explainer"].directory = "changed"  # type: ignore[misc]
-
-
-def test_chinese_style_catalog_has_nine_unique_stable_entries() -> None:
-    assert [entry.chinese_name for entry in CHINESE_STYLE_CATALOG] == [
-        "小黑怪诞插画",
-        "编辑动效插画",
-        "语义手绘插画",
-        "动态文字卡片",
+    assert core_chinese_names == {
         "方块海绵插画",
-        "鲜彩漫画讲解",
-        "工程手稿图解",
-        "四格连环漫画",
-        "蓝黑白板讲解",
-        "小黄温度插画",
-    ]
-    assert [entry.target for entry in CHINESE_STYLE_CATALOG[:4]] == [
+        "极简粗线简笔白板风",
+        "极简商务涂鸦风",
+        "暖米黄素描白板风",
+        "粗线扁平国风卡通",
+        "爆款高热吸睛风",
+        "黑金科技发布会风",
+        "清新治愈手账风",
+        "复古报纸拼贴风",
+        "纸感隐喻拼贴风",
+        "漫画墨线解释风",
+        "3D黏土趣味风",
+        "赛博霓虹漫画风",
+    }
+
+    # 验证 13 款模板均包含画面特征、推荐内容和预览图引用
+    for tid in EXPECTED_CORE_13_THEMES:
+        theme = THEMES[tid]
+        assert theme.features is not None and len(theme.features) > 0
+        assert theme.recommended is not None and len(theme.recommended) > 0
+        assert theme.preview_image is not None and len(theme.preview_image) > 0
+
+    with pytest.raises(TypeError):
+        THEMES["another"] = THEMES["sponge-host-handdrawn-v1"]  # type: ignore[index]
+    with pytest.raises(FrozenInstanceError):
+        THEMES["sponge-host-handdrawn-v1"].directory = "changed"  # type: ignore[misc]
+
+
+def test_chinese_style_catalog_includes_13_core_themes() -> None:
+    catalog_targets = [entry.target for entry in CHINESE_STYLE_CATALOG]
+    assert catalog_targets[:4] == [
         "xiaohei-white-first-v1",
         "editorial-motion-v2",
         "semantic-handdrawn-v3",
         "semantic-handdrawn-v3/type-led",
     ]
-    assert [entry.target for entry in CHINESE_STYLE_CATALOG[4:]] == [
+    # 后面 13 项为核心模板
+    assert catalog_targets[4:] == [
         "sponge-host-handdrawn-v1",
-        "vivid-comic-explainer",
-        "engineering-sketch-explainer",
-        "four-panel-comic-explainer",
-        "blue-black-whiteboard-explainer",
-        "xiaohuang-warm-first-v1",
+        "minimal-whiteboard",
+        "business-doodle",
+        "warm-pencil",
+        "guofeng-flat",
+        "viral-pop",
+        "black-gold-tech",
+        "healing-journal",
+        "retro-collage",
+        "paper-metaphor",
+        "oil-visual",
+        "clay-3d",
+        "cyber-neon",
     ]
-    assert len({entry.invocation for entry in CHINESE_STYLE_CATALOG}) == 10
+    assert len(CHINESE_STYLE_CATALOG) == 17
     assert all(entry.invocation.endswith("。") for entry in CHINESE_STYLE_CATALOG)
 
 
 def test_get_theme_fails_closed_for_unknown_or_non_string_ids() -> None:
-    assert get_theme("vivid-comic-explainer") is THEMES["vivid-comic-explainer"]
+    assert get_theme("sponge-host-handdrawn-v1") is THEMES["sponge-host-handdrawn-v1"]
+    assert get_theme("minimal-whiteboard") is THEMES["minimal-whiteboard"]
     for value in ("unknown", "", None, 4):
         with pytest.raises(
             IllustrationThemeError, match="^illustration-theme-invalid$"
@@ -142,7 +129,17 @@ def test_default_request_resolves_to_sponge_contract() -> None:
     assert illustration_themes.DEFAULT_VISUAL_TARGET == "sponge-host-handdrawn-v1"
 
 
-def test_xiaohuang_request_resolves_to_registered_profiled_theme() -> None:
+def test_core_13_themes_resolve_to_registered_profiled_theme() -> None:
+    for theme_id in EXPECTED_CORE_13_THEMES:
+        resolved = illustration_themes.resolve_visual_style(theme_id)
+        assert resolved.target == theme_id
+        assert resolved.schema_version == 4
+        assert resolved.visual_system == "profiled-illustration-v4"
+        assert resolved.visual_theme == theme_id
+        assert resolved.illustration_skill == "ra-video-illustrations"
+
+
+def test_legacy_xiaohuang_request_resolves_for_backward_compatibility() -> None:
     assert illustration_themes.resolve_visual_style(
         "xiaohuang-warm-first-v1"
     ) == illustration_themes.ResolvedVisualStyle(

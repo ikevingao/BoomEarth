@@ -32,7 +32,7 @@ _TARGETS = {
     "overlay-label-1", "overlay-label-2", "overlay-label-3", "overlay-label-4",
     "overlay-label-5", "overlay-label-6", "overlay-label-7", "overlay-label-8",
 }
-_ENTRY_EFFECTS = {"fade-down", "fade-up", "line-reveal", "scale-settle", "wipe-right"}
+_ENTRY_EFFECTS = {"fade-down", "fade-up", "line-reveal", "scale-settle", "wipe-right", "ink-color-reveal"}
 _MOTION_PROFILES = {
     "editorial-motion-v2": "editorial-cards-v2",
     "semantic-handdrawn-v3": "semantic-handdrawn-v3",
@@ -40,6 +40,18 @@ _MOTION_PROFILES = {
 }
 _PROFILED_VISUAL_EFFECT = {
     "sponge-host-handdrawn-v1": "scale-settle",
+    "minimal-whiteboard": "line-reveal",
+    "business-doodle": "line-reveal",
+    "warm-pencil": "fade-up",
+    "guofeng-flat": "scale-settle",
+    "viral-pop": "scale-settle",
+    "black-gold-tech": "fade-up",
+    "healing-journal": "fade-up",
+    "retro-collage": "scale-settle",
+    "paper-metaphor": "wipe-right",
+    "oil-visual": "line-reveal",
+    "clay-3d": "scale-settle",
+    "cyber-neon": "wipe-right",
     "vivid-comic-explainer": "scale-settle",
     "engineering-sketch-explainer": "line-reveal",
     "four-panel-comic-explainer": "wipe-right",
@@ -235,7 +247,9 @@ def validate_motion_plan(value: object, *, project_root: Path) -> MotionPlan:
             if key in seen:
                 raise MotionPlanError("motion-plan-target-invalid")
             seen.add(key)
-            if item_duration < 0.16 or at < start - 1e-9 or at + item_duration > end + 1e-9:
+            # ink-color-reveal 特例：最短时长放宽至 1.0s（其他效果 0.16s）
+            min_duration = 1.0 if motion == "ink-color-reveal" else 0.16
+            if item_duration < min_duration or at < start - 1e-9 or at + item_duration > end + 1e-9:
                 raise MotionPlanError("motion-plan-timing-invalid")
             entries.append(MotionEntry(str(target), at, item_duration, str(motion)))
         cues_raw = raw["semantic_cues"]
@@ -260,6 +274,15 @@ def validate_motion_plan(value: object, *, project_root: Path) -> MotionPlan:
                 raise MotionPlanError("motion-plan-timing-invalid")
             ambient = AmbientMotion("visual", "slow-parallax", ambient_start, ambient_end, strength)
         scenes.append(SceneMotion(str(raw["scene_id"]), start, end, tuple(entries), tuple(cues), ambient))
+    # 当内容计划包含 visual_effect 时，校验一致性规则
+    plan_effect = content.get("visual_effect")
+    for scene_motion in scenes:
+        visual_entry = next((e for e in scene_motion.entries if e.target == "visual"), None)
+        if visual_entry is not None:
+            ink_used = visual_entry.motion == "ink-color-reveal"
+            effect_declared = plan_effect == "ink-color-reveal"
+            if ink_used != effect_declared:
+                raise MotionPlanError("motion-plan-effect-invalid")
     return MotionPlan(1, expected_profile, content_snapshot.sha256, timeline_snapshot.sha256, words_snapshot.sha256, duration, tuple(scenes))
 
 
@@ -395,7 +418,12 @@ def compile_motion_plan(*, project_root: Path) -> MotionPlanSnapshot:
     if len(content["scenes"]) != len(timeline["scenes"]):
         raise MotionPlanError("motion-plan-input-changed")
     if content["visual_system"] == "profiled-illustration-v4":
-        visual_effect = _PROFILED_VISUAL_EFFECT.get(content.get("visual_theme"))
+        # V5：优先使用内容计划声明的 visual_effect，无声明时回落主题默认
+        plan_effect = content.get("visual_effect")
+        if plan_effect is not None and plan_effect in _ENTRY_EFFECTS:
+            visual_effect = plan_effect
+        else:
+            visual_effect = _PROFILED_VISUAL_EFFECT.get(content.get("visual_theme"))
         if visual_effect is None:
             raise MotionPlanError("motion-plan-input-changed")
     else:
@@ -424,7 +452,9 @@ def compile_motion_plan(*, project_root: Path) -> MotionPlanSnapshot:
             for line_index in range(min(2, len(subtitle_lines))):
                 targets.append((f"subtitle-line-{line_index + 1}", 0.60 + line_index * 0.18, 0.24, "fade-up"))
         if content_scene.get("visual_asset") or content_scene.get("visual_mode") == "type-led":
-            targets.append(("visual", 0.82, 0.38, visual_effect))
+            # ink-color-reveal 效果标称时长 1.5s，其他效果 0.38s
+            visual_duration = 1.5 if visual_effect == "ink-color-reveal" else 0.38
+            targets.append(("visual", 0.82, visual_duration, visual_effect))
         overlay_labels = content_scene.get("overlay_labels")
         if isinstance(overlay_labels, list):
             for label_index in range(min(8, len(overlay_labels))):

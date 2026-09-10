@@ -72,6 +72,18 @@ _V5_BACKGROUND_SHA256 = (
 )
 _THEME_MOTION_HINT = {
     "sponge-host-handdrawn-v1": "character-push",
+    "minimal-whiteboard": "path-reveal",
+    "business-doodle": "path-reveal",
+    "warm-pencil": "whole-frame-push",
+    "guofeng-flat": "character-push",
+    "viral-pop": "character-push",
+    "black-gold-tech": "whole-frame-push",
+    "healing-journal": "whole-frame-push",
+    "retro-collage": "whole-frame-push",
+    "paper-metaphor": "whole-frame-push",
+    "oil-visual": "path-reveal",
+    "clay-3d": "character-push",
+    "cyber-neon": "whole-frame-push",
     "vivid-comic-explainer": "character-push",
     "engineering-sketch-explainer": "path-reveal",
     "four-panel-comic-explainer": "whole-frame-push",
@@ -215,6 +227,8 @@ def _scene_html(
     component_class = " motion-component" if motion_enabled else ""
     hidden = ' style="opacity:0"' if motion_enabled else ""
     type_led_contracts = type_led_contracts or {}
+    # V5：读取内容计划中的 visual_effect（如有）
+    ink_reveal = getattr(plan, "visual_effect", None) == "ink-color-reveal"
     for scene, timing in zip(plan.scenes, timeline.scenes):
         title = "".join(
             f'<span id="{scene.id}--title-line-{index}" class="title-line{component_class}" '
@@ -288,12 +302,27 @@ def _scene_html(
             )
         elif asset_name is not None:
             if (
-                xiaohei_motion and illustration_text_mode == "embedded"
-            ) or native_text_theme:
-                visual = (
-                    f'<img src="assets/{asset_root}/{html.escape(asset_name, quote=True)}" '
-                    f'class="xiaohei-art-native" alt="" />'
-                )
+                (xiaohei_motion and illustration_text_mode == "embedded") or native_text_theme
+            ):
+                # V5 ink-color-reveal：输出双层容器
+                if ink_reveal:
+                    ink_asset_name = asset_name.replace(".png", "-ink.png")
+                    ink_asset_root = f"ink-variants/{theme_id}"
+                    visual = (
+                        f'<div class="ink-color-stack">'
+                        f'<img class="ink-color-layer" id="{scene.id}--visual--color" '
+                        f'src="assets/{asset_root}/{html.escape(asset_name, quote=True)}" '
+                        f'alt="" style="opacity:0" />'
+                        f'<img class="ink-layer" id="{scene.id}--visual--ink" '
+                        f'src="assets/{ink_asset_root}/{html.escape(ink_asset_name, quote=True)}" '
+                        f'alt="" style="opacity:0" />'
+                        f'</div>'
+                    )
+                else:
+                    visual = (
+                        f'<img src="assets/{asset_root}/{html.escape(asset_name, quote=True)}" '
+                        f'class="xiaohei-art-native" alt="" />'
+                    )
             else:
                 label_class = (
                     "xiaohei-fallback-label"
@@ -456,12 +485,30 @@ def _timeline_script(
         }
         for scene_index, scene in enumerate(motion_scenes):
             for entry in scene.entries:
-                before, after, ease = effect_values[entry.motion]
                 element_id = json.dumps(f"{scene.scene_id}--{entry.target}")
-                motions += (
-                    f"tl.fromTo(document.getElementById({element_id}),{before},"
-                    f"{{...{after},duration:{entry.duration:.3f},ease:'{ease}'}},{entry.at:.3f});"
-                )
+                if entry.motion == "ink-color-reveal" and entry.target == "visual":
+                    # 三段 GSAP 动画：实现默线显现→交叉过渡→彩色涌现
+                    at = entry.at
+                    ink_id = json.dumps(f"{scene.scene_id}--visual--ink")
+                    color_id = json.dumps(f"{scene.scene_id}--visual--color")
+                    motions += (
+                        # 阶段 1：默线层显现（0.6s）
+                        f"tl.fromTo(document.getElementById({ink_id}),"
+                        f"{{opacity:0}},{{opacity:1,duration:0.600,ease:'power2.out'}},{at:.3f});"
+                        # 阶段 2a：默线层淡出（0.5s，与彩色层交叉）
+                        f"tl.to(document.getElementById({ink_id}),"
+                        f"{{opacity:0,duration:0.500,ease:'sine.in'}},{at + 0.600:.3f});"
+                        # 阶段 2b：彩色层渐入（灰度→彩色，0.9s）
+                        f"tl.fromTo(document.getElementById({color_id}),"
+                        f"{{opacity:0,filter:'grayscale(1)'}},"
+                        f"{{opacity:1,filter:'grayscale(0)',duration:0.900,ease:'sine.out'}},{at + 0.600:.3f});"
+                    )
+                else:
+                    before, after, ease = effect_values[entry.motion]
+                    motions += (
+                        f"tl.fromTo(document.getElementById({element_id}),{before},"
+                        f"{{...{after},duration:{entry.duration:.3f},ease:'{ease}'}},{entry.at:.3f});"
+                    )
             for cue in scene.semantic_cues:
                 element_id = json.dumps(f"{scene.scene_id}--{cue.target}")
                 motions += (
@@ -717,6 +764,29 @@ def prepare_content_render_project(
             asset_names[scene.id] = f"{scene.id}{source.suffix.lower()}"
     except ArtifactError:
         raise ContentRenderProjectError("render inputs are invalid") from None
+    # V5：当声明 ink-color-reveal 效果时，捕获对应默线稿资产
+    ink_snapshots: dict[str, FileSnapshot] = {}
+    ink_names: dict[str, str] = {}
+    if (
+        plan_snapshot.plan.visual_system == PROFILED_VISUAL_SYSTEM
+        and getattr(plan_snapshot.plan, "visual_effect", None) == "ink-color-reveal"
+        and profiled_theme is not None
+    ):
+        ink_dir = root / "工程" / "ink-variants" / profiled_theme.directory
+        if not ink_dir.is_dir():
+            raise ContentRenderProjectError("render inputs are invalid")
+        try:
+            for scene in plan_snapshot.plan.scenes:
+                if scene.visual_asset is None:
+                    continue
+                source = root / Path(*scene.visual_asset.split("/"))
+                ink_name = f"{scene.id}-ink.png"
+                ink_path = ink_dir / ink_name
+                captured = capture_regular_file(ink_path, within=root)
+                ink_snapshots[scene.id] = captured
+                ink_names[scene.id] = ink_name
+        except ArtifactError:
+            raise ContentRenderProjectError("render inputs are invalid") from None
     snapshots = (
         plan_snapshot.snapshot,
         plan_snapshot.handoff_snapshot,
@@ -735,6 +805,8 @@ def prepare_content_render_project(
         manifest,
         *caption_snapshots.values(),
         *asset_snapshots.values(),
+        # V5：将默线稿快照内入输入集
+        *ink_snapshots.values(),
         template,
         gsap,
         *((v5_background,) if v5_background is not None else ()),
@@ -800,6 +872,13 @@ def prepare_content_render_project(
             name = asset_names[scene_id]
             assert name is not None
             (stage / "assets" / asset_dir / name).write_bytes(snapshot.payload)
+        # V5：写出默线稿资产到 ink-variants 子目录
+        if ink_snapshots and profiled_theme is not None:
+            ink_stage_dir = stage / "assets" / "ink-variants" / profiled_theme.directory
+            ink_stage_dir.mkdir(parents=True, exist_ok=True)
+            for scene_id, snapshot in ink_snapshots.items():
+                ink_name = ink_names[scene_id]
+                (ink_stage_dir / ink_name).write_bytes(snapshot.payload)
         if motion_snapshot is not None:
             (stage / "motion-plan.json").write_bytes(motion_snapshot.snapshot.payload)
         if illustration_snapshot is not None:

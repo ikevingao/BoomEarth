@@ -1,0 +1,20 @@
+{
+  "status": "pass",
+  "timing_source": "volcengine-word-timestamps",
+  "alignment_coverage": 1.0,
+  "minimum_coverage": 0.9,
+  "script_characters": 113,
+  "matched_characters": 113,
+  "asr_characters": 113,
+  "word_units": 109,
+  "caption_count": 10,
+  "overlap_count": 0,
+  "max_reading_units_per_second": 5.556,
+  "short_fragments": [],
+  "split_connectors": [],
+  "source_media": "narration.wav",
+  "asr_resource_id": "volc.bigasr.auc_turbo",
+  "warnings": [],
+  "errors": [],
+  "narration_sha256": "db01b614c23e993409106b71e1603faffe74c7bbec4af1b038cfde991dee7186"
+}

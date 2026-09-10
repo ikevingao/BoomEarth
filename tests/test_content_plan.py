@@ -205,6 +205,18 @@ def schema4_candidate(
     return candidate
 
 
+def schema5_candidate(
+    project: Path,
+    *,
+    theme_id: str = "sponge-host-handdrawn-v1",
+    visual_effect: str = "ink-color-reveal",
+) -> dict[str, object]:
+    candidate = schema4_candidate(project, theme_id=theme_id)
+    candidate["schema_version"] = 5
+    candidate["visual_effect"] = visual_effect
+    return candidate
+
+
 def _populate_project(root: Path) -> None:
     media = root / "工程" / "media"
     assets = root / "工程" / "assets" / "xiaohei-illustrations"
@@ -240,6 +252,10 @@ def project(tmp_path: Path) -> Path:
 
 def _candidate_visual_target(candidate: dict[str, object]) -> str:
     schema_version = candidate.get("schema_version")
+    if schema_version == 5:
+        theme = candidate.get("visual_theme")
+        effect = candidate.get("visual_effect")
+        return f"{theme}.{effect}" if effect else str(theme)
     if schema_version == 4:
         theme = candidate.get("visual_theme")
         return theme if isinstance(theme, str) and theme in THEMES else "vivid-comic-explainer"
@@ -1030,3 +1046,48 @@ def test_cli_loads_a_canonical_project_and_prints_only_safe_receipt(
         "scenes=4\n"
     )
     assert (created.active_dir / "工程" / "content-plan.json").is_file()
+
+
+def test_v5_handoff_visual_contract_parsing() -> None:
+    text = """---
+status: 制作中
+visual: "sponge-host-handdrawn-v1.ink-color-reveal"
+illustration_skill: "ra-video-illustrations"
+---
+## 新稿分段
+### segment-001
+正文。
+## 分段视觉意图
+- 已审核。
+"""
+    contract = parse_handoff_visual_contract(text)
+    assert contract.target == "sponge-host-handdrawn-v1.ink-color-reveal"
+    assert contract.visual_effect == "ink-color-reveal"
+
+
+def test_v5_candidate_with_ink_color_reveal_compiles_successfully(project: Path) -> None:
+    cand = schema5_candidate(project)
+    result = compile_fixture(project, cand)
+    assert result.plan.schema_version == 5
+    assert result.plan.visual_effect == "ink-color-reveal"
+
+    # Verify content-plan.json has visual_effect
+    saved = json.loads((project / "工程" / "content-plan.json").read_text(encoding="utf-8"))
+    assert saved["schema_version"] == 5
+    assert saved["visual_effect"] == "ink-color-reveal"
+
+
+def test_v5_candidate_rejects_unknown_visual_effect(project: Path) -> None:
+    cand = schema5_candidate(project, visual_effect="neon-glow")
+    with pytest.raises(ContentPlanError, match="content plan schema is invalid"):
+        compile_fixture(project, cand, handoff_visual="sponge-host-handdrawn-v1.ink-color-reveal")
+
+
+def test_v5_candidate_rejects_non_whitelisted_theme(project: Path) -> None:
+    cand = schema5_candidate(project, theme_id="vivid-comic-explainer", visual_effect="ink-color-reveal")
+    with pytest.raises(ContentPlanError, match="content plan schema is invalid"):
+        compile_fixture(project, cand, handoff_visual="sponge-host-handdrawn-v1.ink-color-reveal")
+
+
+
+

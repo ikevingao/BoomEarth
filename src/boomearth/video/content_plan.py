@@ -21,8 +21,10 @@ from boomearth.video.artifacts import (
     snapshot_matches,
 )
 from boomearth.video.illustration_themes import (
+    EFFECT_THEME_WHITELIST,
     PROFILED_VISUAL_SYSTEM,
     TYPE_LED_TARGET,
+    VISUAL_EFFECTS,
     IllustrationTheme,
     IllustrationThemeError,
     get_theme,
@@ -43,6 +45,8 @@ _TOP_LEVEL_FIELDS = {
 _V2_TOP_LEVEL_FIELDS = _TOP_LEVEL_FIELDS | {"illustration_skill"}
 _V3_TOP_LEVEL_FIELDS = _V2_TOP_LEVEL_FIELDS
 _V4_TOP_LEVEL_FIELDS = _V3_TOP_LEVEL_FIELDS | {"visual_theme"}
+# V5 在 V4 基础上增加可选动效字段
+_V5_TOP_LEVEL_FIELDS = _V4_TOP_LEVEL_FIELDS | {"visual_effect"}
 _SCENE_REQUIRED_FIELDS = {
     "id",
     "narration_segment_ids",
@@ -164,6 +168,8 @@ class ContentPlan:
     scenes: tuple[ContentScene, ...]
     illustration_skill: str | None = None
     visual_theme: str | None = None
+    # V5：可选效果标识，如 "ink-color-reveal"
+    visual_effect: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -179,6 +185,8 @@ class HandoffVisualContract:
     visual_system: str
     visual_theme: str | None
     illustration_skill: str
+    # V5：可选效果，None 表示无效果声明
+    visual_effect: str | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -310,6 +318,8 @@ def parse_handoff_visual_contract(text: str) -> HandoffVisualContract:
         visual_system=resolved.visual_system,
         visual_theme=resolved.visual_theme,
         illustration_skill=resolved.illustration_skill,
+        # V5：将效果标识传递至合同
+        visual_effect=resolved.visual_effect,
     )
 
 
@@ -649,8 +659,12 @@ def validate_content_plan(
     is_v2 = schema_version == 2 and not isinstance(schema_version, bool)
     is_v3 = schema_version == 3 and not isinstance(schema_version, bool)
     is_v4 = schema_version == 4 and not isinstance(schema_version, bool)
+    # V5：在 V4 基础上增加可选动效（visual_effect 字段）
+    is_v5 = schema_version == 5 and not isinstance(schema_version, bool)
     expected_top = (
-        _V4_TOP_LEVEL_FIELDS
+        _V5_TOP_LEVEL_FIELDS
+        if is_v5
+        else _V4_TOP_LEVEL_FIELDS
         if is_v4
         else _V3_TOP_LEVEL_FIELDS
         if is_v3
@@ -666,13 +680,13 @@ def validate_content_plan(
     ):
         raise ContentPlanError("project identity is invalid")
     if (
-        schema_version not in {1, 2, 3, 4}
+        schema_version not in {1, 2, 3, 4, 5}
         or isinstance(schema_version, bool)
         or candidate["ratio"] != "16:9"
         or candidate["visual_system"]
         != (
             PROFILED_VISUAL_SYSTEM
-            if is_v4
+            if is_v4 or is_v5
             else "semantic-handdrawn-v3"
             if is_v3
             else "editorial-motion-v2"
@@ -680,7 +694,7 @@ def validate_content_plan(
             else "xiaohei-white-first-v1"
         )
         or (
-            (is_v2 or is_v3 or is_v4)
+            (is_v2 or is_v3 or is_v4 or is_v5)
             and candidate.get("illustration_skill") != "ra-video-illustrations"
         )
         or candidate["typography_scale"] != "mobile-readable"
@@ -690,20 +704,33 @@ def validate_content_plan(
     ):
         raise ContentPlanError("content plan schema is invalid")
     theme: IllustrationTheme | None = None
-    if is_v4:
+    if is_v4 or is_v5:
         try:
             theme = get_theme(candidate["visual_theme"])
         except IllustrationThemeError:
             raise ContentPlanError("content plan schema is invalid") from None
+    # V5：校验可选动效字段
+    plan_visual_effect: str | None = None
+    if is_v5:
+        raw_effect = candidate.get("visual_effect")
+        if raw_effect is not None:
+            if not isinstance(raw_effect, str) or raw_effect not in VISUAL_EFFECTS:
+                raise ContentPlanError("content plan schema is invalid")
+            # 主题必须在该效果白名单内
+            if theme is None or theme.id not in EFFECT_THEME_WHITELIST.get(raw_effect, frozenset()):
+                raise ContentPlanError("content plan schema is invalid")
+            plan_visual_effect = raw_effect
     if (
         schema_version != handoff_visual.schema_version
         or candidate["visual_system"] != handoff_visual.visual_system
         or (theme.id if theme is not None else None) != handoff_visual.visual_theme
         or (
-            (is_v2 or is_v3 or is_v4)
+            (is_v2 or is_v3 or is_v4 or is_v5)
             and candidate.get("illustration_skill")
             != handoff_visual.illustration_skill
         )
+        # V5：动效声明必须与交接稿合同一致
+        or (is_v5 and plan_visual_effect != handoff_visual.visual_effect)
     ):
         raise ContentPlanError("handoff visual contract is invalid")
     handoff_texts = tuple(_speech_equivalence_text(item.text) for item in handoff_segments)
@@ -721,7 +748,7 @@ def validate_content_plan(
     for index, value in enumerate(candidate["scenes"], start=1):
         version_fields = (
             _V4_SCENE_FIELDS
-            if is_v4
+            if is_v4 or is_v5
             else _V3_SCENE_FIELDS
             if is_v3
             else _V2_SCENE_FIELDS
@@ -730,7 +757,7 @@ def validate_content_plan(
         )
         required_version_fields = (
             version_fields
-            if is_v2 or is_v3 or is_v4
+            if is_v2 or is_v3 or is_v4 or is_v5
             else {"overlay_labels"}
             if require_xiaohei_text_layer
             else set()
@@ -779,7 +806,7 @@ def validate_content_plan(
         if is_v2:
             if visual_type not in _VISUAL_TYPES or visual_style not in _VISUAL_STYLES:
                 raise ContentPlanError("content plan schema is invalid")
-        elif is_v3 or is_v4:
+        elif is_v3 or is_v4 or is_v5:
             if (
                 visual_type not in _VISUAL_TYPES
                 or (
@@ -800,7 +827,7 @@ def validate_content_plan(
         illustration_text_mode = "legacy-overlay"
         theme_structure: tuple[str, ...] = ()
         theme_exceptions: tuple[str, ...] = ()
-        if is_v3 or is_v4:
+        if is_v3 or is_v4 or is_v5:
             semantic_subjects = _semantic_phrases(
                 value["semantic_subjects"],
                 minimum_count=1,
@@ -916,12 +943,12 @@ def validate_content_plan(
     if used_segments != expected_segments:
         raise ContentPlanError("narration segment coverage is invalid")
     plan = ContentPlan(
-        schema_version=4 if is_v4 else 3 if is_v3 else 2 if is_v2 else 1,
+        schema_version=5 if is_v5 else 4 if is_v4 else 3 if is_v3 else 2 if is_v2 else 1,
         project_id=project_id,
         ratio="16:9",
         visual_system=(
             PROFILED_VISUAL_SYSTEM
-            if is_v4
+            if is_v4 or is_v5
             else "semantic-handdrawn-v3"
             if is_v3
             else "editorial-motion-v2"
@@ -932,9 +959,11 @@ def validate_content_plan(
         caption_style="anchor-dark",
         scenes=tuple(scenes),
         illustration_skill=(
-            "ra-video-illustrations" if is_v2 or is_v3 or is_v4 else None
+            "ra-video-illustrations" if is_v2 or is_v3 or is_v4 or is_v5 else None
         ),
         visual_theme=theme.id if theme is not None else None,
+        # V5：将动效标识带入 ContentPlan
+        visual_effect=plan_visual_effect if is_v5 else None,
     )
     if validate_public_handoff(encode_canonical_json(_plan_dict(plan)).decode("utf-8")):
         raise ContentPlanError("public content is invalid")
@@ -996,6 +1025,9 @@ def _plan_dict(plan: ContentPlan) -> dict[str, object]:
         result["illustration_skill"] = plan.illustration_skill
     if plan.visual_theme is not None:
         result["visual_theme"] = plan.visual_theme
+    # V5：序列化 visual_effect
+    if plan.visual_effect is not None:
+        result["visual_effect"] = plan.visual_effect
     return result
 
 

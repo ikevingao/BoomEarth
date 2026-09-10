@@ -49,12 +49,13 @@ def _missing_status(root: Path) -> int:
 
 
 def _path_failures(settings: Settings) -> list[str]:
-    checks = (
-        ("INDEXTTS2_ROOT", settings.indextts2_root.is_dir()),
-        ("INDEXTTS2_PYTHON", settings.indextts2_python.is_file()),
-        ("INDEXTTS2_REFERENCE_AUDIO", settings.indextts2_reference_audio.is_file()),
-        ("YT_DLP_PATH", settings.yt_dlp_path.is_file()),
-    )
+    checks: list[tuple[str, bool]] = [("YT_DLP_PATH", settings.yt_dlp_path.is_file())]
+    if getattr(settings, "tts_provider", "indextts2-local") == "indextts2-local":
+        checks.extend([
+            ("INDEXTTS2_ROOT", settings.indextts2_root.is_dir()),
+            ("INDEXTTS2_PYTHON", settings.indextts2_python.is_file()),
+            ("INDEXTTS2_REFERENCE_AUDIO", settings.indextts2_reference_audio.is_file()),
+        ])
     return [name for name, exists in checks if not exists]
 
 
